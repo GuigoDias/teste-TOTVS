@@ -235,11 +235,11 @@ const usersData = [
     name: "Wendy Ebert",
     squad: "Markets",
     active: false,
-    activeEnvironments: 2,
+    activeEnvironments: 3,
     environments: [
       {
         id: "e9619e3cb5ecbfa4f0bad4cd",
-        active: false,
+        active: true,
         softwareType: "sgbd",
         expirationDate: "2023-03-30T00:41:06.315Z",
       },
@@ -854,13 +854,22 @@ module.exports = {
     );
 
     const environments = usersData.flatMap((user) =>
-      user.environments.map((env) => ({
-        id: env.id,
-        active: env.active,
-        softwareType: env.softwareType,
-        expirationDate: env.expirationDate,
-        usuario_id: user.uuid,
-      }))
+      user.environments.map((env) => {
+        const createdAt = new Date();
+        const expirationDate = new Date(env.expirationDate);
+
+        if (expirationDate < createdAt) {
+          env.expirationDate = createdAt;
+        }
+
+        return {
+          id: env.id,
+          active: env.active,
+          softwareType: env.softwareType,
+          expirationDate: env.expirationDate,
+          usuario_id: user.uuid,
+        };
+      })
     );
 
     await queryInterface.bulkInsert("environments", environments, {});

@@ -1,42 +1,42 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('environments', {
+    await queryInterface.createTable("environments", {
       id: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.UUID
+        type: Sequelize.UUID,
       },
       active: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       softwareType: {
-        type: Sequelize.ENUM('erp','sgbd')
+        type: Sequelize.ENUM("erp", "sgbd"),
       },
       expirationDate: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       usuario_id: {
         type: Sequelize.STRING,
         allowNull: false,
-        references: { model: 'usuarios' , key: 'uuid' },
-        onDelete: 'CASCADE',
+        references: { model: "usuarios", key: "uuid" },
+        onDelete: "CASCADE",
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-      }
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('environments');
-  }
+    await queryInterface.dropTable("environments");
+  },
 };
