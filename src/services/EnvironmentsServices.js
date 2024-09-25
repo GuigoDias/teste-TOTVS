@@ -6,7 +6,13 @@ class EnvironmentsServices {
     this.model = Environments;
   }
 
-  async pegarTodosOsRegistros() {}
+  async pegarTodosOsRegistros(uuid) {
+    return this.model.findAll({
+      where: {
+        usuario_id: uuid,
+      }
+    });
+  }
 
   async pegarRegistroPorId(id) {
     return this.model.findByPk(id);

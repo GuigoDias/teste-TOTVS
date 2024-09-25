@@ -5,7 +5,7 @@ const environmentsController = new EnvironmentsController();
 
 const router = Router();
 
-router.get("/environments", (req, res) =>
+router.get("/environments/:uuid", (req, res) =>
   environmentsController.pegarTodos(req, res)
 );
 router.get("/environments/:id", (req, res) =>

@@ -1,5 +1,5 @@
 const { Op, fn, col } = require("sequelize");
-const { Usuario, Environments, sequelize } = require("../models");
+const { Usuario, sequelize } = require("../models");
 
 class UsuarioServices {
   constructor() {

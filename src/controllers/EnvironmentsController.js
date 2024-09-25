@@ -6,9 +6,11 @@ class EnvironmentsController {
   }
 
   async pegarTodos(req, res) {
+    const { uuid } = req.params;
+
     try {
       const listaDeRegistro =
-        await this.entidadeService.pegarTodosOsRegistros();
+        await this.entidadeService.pegarTodosOsRegistros(uuid);
       return res.status(200).json(listaDeRegistro);
     } catch (erro) {
       console.error(erro);

@@ -21,3 +21,5 @@ function isAfterCreation(expirationDate, instance) {
     );
   }
 }
+
+module.exports = { isAfterCreation }
