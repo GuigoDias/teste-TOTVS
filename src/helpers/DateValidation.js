@@ -1,7 +1,11 @@
-function isAfterCreation(expirationDate, instance){
-    if(new Date(expirationDate) < new Date(instance.createdAt)){
-        throw new Error('A data de expiração não pode ser anterior à data de criação.');
+function isAfterCreation(expirationDate, instance) {
+    const createdAt = new Date(instance._previousDataValues.createdAt); // Data de criação original
+    const newExpirationDate = new Date(expirationDate);
+  
+    if (newExpirationDate < createdAt) {
+      throw new Error('A data de expiração não pode ser anterior à data de criação.');
     }
-};
+  }
+  
 
 module.exports = { isAfterCreation };

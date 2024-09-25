@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Usuario.hasMany(models.Environments, {
         foreignKey: 'usuario_id',
+        onDelete: 'CASCADE'
       })
     }
   }

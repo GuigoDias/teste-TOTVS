@@ -1,32 +1,63 @@
-const { Model, where } = require('sequelize');
-const Services = require('./Services');
-const dataSource = require('../models');
+const { Op , fn , col } = require('sequelize');
+const { Usuario, Environments , sequelize } = require('../models');
 
-class UsuarioServices extends Services {
+
+class UsuarioServices {
     constructor() {
-        super('Usuario', dataSource);
+        this.model = Usuario;
     }
 
-    async pegarRegistroPorNome(name){
-        return dataSource[this.model].findOne( { where: { name }});
+    async pegarTodosOsRegistros(options = {}) {
+        return this.model.findAll(options);
     }
 
-    async desativarEnvironmentsExtras(id){
-        const usuario = await dataSource[this.model].findOne({
-            where: { uuid : id },
-            include: [{
-                model: dataSource.Environments,
-                where: { active: true },
-            }],
+    async topCincoAreasComEnvironments() {
+        return this.model.findAll({
+            attributes: ['squad', [fn('SUM', col('activeEnvironments')), 'totalActiveEnvironments']],
+            where: {
+                active: true,
+                activeEnvironments: { [Op.gt]: 0 }
+            },
+            group: ['squad'],
+            order: [[sequelize.fn('SUM', sequelize.col('activeEnvironments')), 'DESC']],
+            limit: 5,
+            raw: true
         });
+    }
 
-        if(usuario && usuario.Environments.length > 2){
-            const ambientesParaDesativar = usuario.Environments.slice(2);
-            await Promise.all(ambientesParaDesativar.map(env =>
-                dataSource.Environment.update({ active: false },
-                    { where: {id: env.id }})
-            ));
+    async pegarRegistroPorId(uuid) {
+        return this.model.findByPk(uuid);
+    }
+
+    async criarRegistro(dadosDoRegistro) {
+        return this.model.create(dadosDoRegistro);
+    }
+
+    async atualizarRegistro(dadosAtualizados, uuid) {
+        const ListaDeRegistrosAtualizados = await this.model.update(dadosAtualizados, {
+            where: { uuid: uuid }
+        });
+        if (ListaDeRegistrosAtualizados[0] === 0) {
+            throw new Error('Usuário não encontrado.')
         }
+        return true;
+    }
+
+    async excluirRegistro(uuid) {
+        return this.model.destroy({ where: { uuid: uuid } });
+    }
+
+    async atualizarActiveEnvironments(uuid) {
+        const contagemEnvironmentsAtivos = await Environments.count({
+            where: {
+                usuario_id: uuid,
+                active: true
+            }
+        });
+        await this.model.update(
+            { activeEnvironments: contagemEnvironmentsAtivos },
+            { where: { uuid: uuid } }
+        );
     }
 }
 
